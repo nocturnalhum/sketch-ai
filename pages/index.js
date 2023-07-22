@@ -15,6 +15,7 @@ export default function Home() {
   };
 
   const handleTools = () => {
+    alert('handletools clicked');
     setShowTools((prevValue) => !prevValue);
   };
 
