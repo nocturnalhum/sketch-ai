@@ -29,7 +29,7 @@ export default function Home() {
             onClick={handleTools}
             className='absolute left-0 -top-9 px-10 py-1 bg-slate-900 rounded-full'
           >
-            Tools
+            ToolsTest
           </button>
           {!image && (
             <button
@@ -55,8 +55,8 @@ export default function Home() {
           </div>
         </div>
         <div
-          className={`translate-y-[200%] duration-500 ${
-            showTools ? 'translate-y-[0%]' : 'translate-y-[200%]'
+          className={`duration-500 ${
+            showTools ? 'translate-y-[200%]' : 'translate-y-0'
           } `}
         >
           <Tools />
