@@ -31,8 +31,7 @@ export default function Canvas({ canvasRef, contextRef, myRef }) {
         ctx.drawImage(image, startX, startY, imageWidth, imageHeight);
       };
     }
-    // TODO: Fix resize when tilting from portrait to landscrape
-    // Prioritize height not width
+
     const resize = () => {
       ctx.canvas.width = myRef.current.clientWidth;
       ctx.canvas.height = myRef.current.clientHeight;
@@ -43,13 +42,14 @@ export default function Canvas({ canvasRef, contextRef, myRef }) {
       if (savedDrawing) {
         const image = new Image();
         image.src = savedDrawing;
+        console.log('Image natural Width', image.naturalWidth);
         image.onload = () => {
-          const scale =
-            image.naturalWidth > image.naturalHeight
-              ? canvas.height / image.naturalHeight
-              : canvas.width / image.naturalWidth;
-          const imageWidth = image.naturalWidth * scale;
-          const imageHeight = image.naturalHeight * scale;
+          // const scale =
+          //   image.naturalWidth > image.naturalHeight
+          //     ? canvas.height / image.naturalHeight
+          //     : canvas.width / image.naturalWidth;
+          const imageWidth = image.naturalWidth;
+          const imageHeight = image.naturalHeight;
           const startX = (canvas.width - imageWidth) / 2;
           const startY = (canvas.height - imageHeight) / 2;
           ctx.drawImage(image, startX, startY, imageWidth, imageHeight);
