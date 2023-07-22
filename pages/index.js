@@ -59,7 +59,7 @@ export default function Home() {
             showTools ? 'translate-y-[250%]' : 'translate-y-0'
           } `}
         >
-          <Tools />
+          <Tools canvasRef={canvasRef} contextRef={contextRef} />
         </div>
       </div>
     </main>
