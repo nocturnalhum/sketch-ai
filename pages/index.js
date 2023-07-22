@@ -6,7 +6,7 @@ import Tools from '@/components/Tools';
 export default function Home() {
   const [flip, setFlip] = useState(false);
   const [image, setImage] = useState(false);
-  const [showTools, setShowTools] = useState(false);
+  const [showTools, setShowTools] = useState(true);
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
@@ -15,7 +15,7 @@ export default function Home() {
   };
 
   const handleTools = () => {
-    setShowTools((prevValue) => !prevValue);
+    setShowTools(!showTools);
   };
 
   return (
