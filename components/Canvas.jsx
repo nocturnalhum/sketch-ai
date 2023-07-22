@@ -42,7 +42,6 @@ export default function Canvas({ canvasRef, contextRef, myRef }) {
       if (savedDrawing) {
         const image = new Image();
         image.src = savedDrawing;
-        console.log('Image natural Width', image.naturalWidth);
         image.onload = () => {
           // const scale =
           //   image.naturalWidth > image.naturalHeight

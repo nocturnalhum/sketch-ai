@@ -15,7 +15,6 @@ export default function Home() {
   };
 
   const handleTools = () => {
-    alert('handletools clicked');
     setShowTools((prevValue) => !prevValue);
   };
 
@@ -56,8 +55,8 @@ export default function Home() {
           </div>
         </div>
         <div
-          className={`translate-y-[250%] duration-500 ${
-            showTools ? 'translate-y-[0%]' : ''
+          className={`translate-y-[200%] duration-500 ${
+            showTools ? 'translate-y-[0%]' : 'translate-y-[200%]'
           } `}
         >
           <Tools />
