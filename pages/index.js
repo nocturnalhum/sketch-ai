@@ -1,10 +1,12 @@
 import React, { useRef, useState } from 'react';
 import Card1 from '@/components/Card1';
 import Card2 from '@/components/Card2';
+import Tools from '@/components/Tools';
 
 export default function Home() {
   const [flip, setFlip] = useState(false);
   const [image, setImage] = useState(false);
+  const [showTools, setShowTools] = useState(false);
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
@@ -12,13 +14,23 @@ export default function Home() {
     setFlip((prevValue) => !prevValue);
   };
 
+  const handleTools = () => {
+    setShowTools((prevValue) => !prevValue);
+  };
+
   return (
     <main
-      className={`min-h-screen flex flex-col items-center bg-beach text-gray-100`}
+      className={`min-h-screen flex flex-col items-center bg-beach text-gray-100 overflow-y-hidden`}
     >
       <h1 className='text-xl p-2'>Sketch AI</h1>
       <div className='h-[80vh] max-w-5xl w-full group perspective'>
         <div className='w-full flex justify-end p-2'>
+          <button
+            onClick={handleTools}
+            className='absolute left-0 -top-9 px-10 py-1 bg-slate-900 rounded-full'
+          >
+            Tools
+          </button>
           {!image && (
             <button
               onClick={handleFlip}
@@ -41,6 +53,13 @@ export default function Home() {
           <div className='absolute inset-0 h-full w-full rounded-xl rotate-y-180 backface-hidden'>
             <Card2 />
           </div>
+        </div>
+        <div
+          className={`translate-y-[250%] duration-500 ${
+            showTools ? 'translate-y-[0%]' : ''
+          } `}
+        >
+          <Tools />
         </div>
       </div>
     </main>

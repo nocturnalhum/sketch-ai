@@ -161,9 +161,6 @@ export default function Canvas({ canvasRef, contextRef, myRef }) {
   }, [isDrawing, contextRef, canvasRef]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className='border border-black bg-white select-none w-full h-full'
-    />
+    <canvas ref={canvasRef} className='bg-white select-none w-full h-full' />
   );
 }
