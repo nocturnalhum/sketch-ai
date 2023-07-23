@@ -2,11 +2,15 @@ import React, { useRef, useState } from 'react';
 import Card1 from '@/components/Card1';
 import Card2 from '@/components/Card2';
 import Tools from '@/components/Tools';
+import StableDiffusion from '@/components/StableDiffusion';
 
 export default function Home() {
   const [flip, setFlip] = useState(false);
-  const [image, setImage] = useState(false);
   const [showTools, setShowTools] = useState(true);
+  const [prediction, setPrediction] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
@@ -31,7 +35,13 @@ export default function Home() {
           >
             Tools
           </button>
-          {!image && (
+          <button
+            onClick={handleTools}
+            className='absolute left-32 -top-9 px-4 py-1 bg-slate-900 rounded-full'
+          >
+            Stable Diffusion
+          </button>
+          {prediction?.status === 'succeeded' && (
             <button
               onClick={handleFlip}
               className=' absolute -top-9 px-10 py-1 bg-slate-900 rounded-full'
@@ -51,15 +61,34 @@ export default function Home() {
             <Card1 canvasRef={canvasRef} contextRef={contextRef} />
           </div>
           <div className='absolute inset-0 h-full w-full rounded-xl rotate-y-180 backface-hidden'>
-            <Card2 />
+            <Card2 prediction={prediction} error={error} message={message} />
           </div>
         </div>
-        <div
-          className={`duration-300 ${
-            showTools ? 'translate-y-[250%]' : 'translate-y-0'
-          } `}
-        >
-          <Tools canvasRef={canvasRef} contextRef={contextRef} />
+        <div className='relative w-full'>
+          <div
+            className={`absolute w-full top-0 duration-300 ${
+              showTools ? 'translate-y-[250%]' : 'translate-y-0'
+            } `}
+          >
+            <Tools canvasRef={canvasRef} contextRef={contextRef} />
+          </div>
+          <div
+            className={`absolute w-full top-0 duration-300 ${
+              !showTools ? 'translate-y-[250%]' : 'translate-y-0'
+            } `}
+          >
+            <StableDiffusion
+              canvasRef={canvasRef}
+              setFlip={setFlip}
+              message={message}
+              setMessage={setMessage}
+              loading={loading}
+              setLoading={setLoading}
+              setPrediction={setPrediction}
+              error={error}
+              setError={setError}
+            />
+          </div>
         </div>
       </div>
     </main>

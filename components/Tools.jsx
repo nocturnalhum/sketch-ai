@@ -10,8 +10,8 @@ export default function Tools({ canvasRef, contextRef }) {
   };
 
   return (
-    <div className='flex items-center justify-center w-full h-20 my-2 bg-gray-500/40 rounded-full'>
-      <div className='w-full p-5'>
+    <div className='w-full h-20 my-2 bg-gray-400/50 rounded-full'>
+      <div className='flex justify-end items-center w-full h-full p-3 '>
         <button onClick={clearCanvas} className='bg-black p-3 rounded-full'>
           Clear
         </button>

@@ -11,6 +11,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'replicate.delivery',
       },
+      {
+        protocol: 'https',
+        hostname: 'sketch-canvas-images.s3.ca-central-1.amazonaws.com',
+      },
     ],
   },
 };
