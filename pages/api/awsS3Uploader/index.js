@@ -10,6 +10,8 @@ const s3 = new AWS.S3({
 });
 
 export default async function handler(req, res) {
+  console.log('Entering S3 Handler');
+  alert('Entering S3 Handler');
   try {
     const fileId = uuidv4();
     const file = dataURLtoFile(req.body, `canvas-${fileId}.png`);

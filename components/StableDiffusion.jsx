@@ -26,9 +26,9 @@ export default function StableDiffusion({
     const drawingDataUrl = canvas.toDataURL('image/png');
 
     try {
-      console.log('Enter Try Block');
       // Upload the image to S3
       setLoading(true);
+      console.log('Enter S3 fetch:');
       const s3response = await fetch('/api/awsS3Uploader', {
         method: 'POST',
         headers: {
