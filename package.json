@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.374.0",
+    "@vercel/blob": "^0.10.0",
     "autoprefixer": "10.4.14",
     "aws-sdk": "^2.1420.0",
     "eslint": "8.45.0",

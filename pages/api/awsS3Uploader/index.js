@@ -1,6 +1,5 @@
-import { dataURLtoFile } from '@/utils/dataURLtoFile';
-import React from 'react';
-const AWS = require('aws-sdk');
+import dataURLtoFile from '@/utils/dataURLtoFile';
+import AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
 
 const s3 = new AWS.S3({
@@ -22,7 +21,7 @@ export default async function handler(req, res) {
     };
     const url = await s3.getSignedUrlPromise('putObject', fileParams);
 
-    const data = await fetch(url, {
+    await fetch(url, {
       method: 'PUT',
       headers: {
         'Content-type': String(file.type),
@@ -33,6 +32,7 @@ export default async function handler(req, res) {
     const uploadedImageUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.S3_BUCKET_REGION}.amazonaws.com/${file.name}`;
     res.status(201).json({ url: uploadedImageUrl });
   } catch (error) {
+    console.log('error:', error);
     res.status(500).json({ error: error.msg });
   }
 }
