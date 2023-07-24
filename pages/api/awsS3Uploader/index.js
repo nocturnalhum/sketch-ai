@@ -33,6 +33,6 @@ export default async function handler(req, res) {
     res.status(201).json({ url: uploadedImageUrl });
   } catch (error) {
     console.log('error:', error);
-    res.status(500).json({ error: error.msg });
+    res.status(500).json({ error });
   }
 }
