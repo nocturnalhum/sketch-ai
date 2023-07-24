@@ -6,25 +6,23 @@ const s3 = new AWS.S3({
   accessKeyId: process.env.S3_ACCESS_KEY,
   secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
   region: process.env.S3_BUCKET_REGION,
-  signatureVersion: 'v4',
 });
 
 export default async function handler(req, res) {
   console.log('Entering S3 Handler');
-  alert('Entering S3 Handler');
   try {
     const fileId = uuidv4();
     const file = dataURLtoFile(req.body, `canvas-${fileId}.png`);
     const fileParams = {
       Bucket: process.env.S3_BUCKET_NAME,
       Key: file.name,
-      Expires: 60,
+      Expires: 600,
       ContentType: file.type,
     };
     const url = await s3.getSignedUrlPromise('putObject', fileParams);
 
     await fetch(url, {
-      method: 'PUT',
+      method: 'POST',
       headers: {
         'Content-type': String(file.type),
       },
