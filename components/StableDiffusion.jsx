@@ -187,7 +187,7 @@ export default function StableDiffusion({
       }
     } catch (error) {
       console.error('Error processing image prediction:', error.toString());
-      setMessage('Error processing image prediction');
+      setMessage(`Error processing image prediction - ${error.toString()}`);
       setError(error.toString());
       setFlip(false);
       setLoading(false);
