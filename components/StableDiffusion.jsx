@@ -26,6 +26,7 @@ export default function StableDiffusion({
     const drawingDataUrl = canvas.toDataURL('image/png');
 
     try {
+      console.log('Enter Try Block');
       // Upload the image to S3
       setLoading(true);
       const s3response = await fetch('/api/awsS3Uploader', {
@@ -37,6 +38,7 @@ export default function StableDiffusion({
       });
 
       if (s3response.status === 201) {
+        console.log('Enter S3 Success Block');
         const data = await s3response.json();
         setMessage('Image uploaded to S3');
         console.log('Url', data.url);
@@ -106,7 +108,7 @@ export default function StableDiffusion({
             />
             <button
               type='submit'
-              className='flex justify-center w-32 px-3 py-4 text-white bg-blue-500 rounded-r-full'
+              className='flex justify-center w-32 px-3 py-4 text-white bg-blue-500 rounded-r-full disabled:cursor-not-allowed'
               disabled={loading || error || !inputPrompt}
             >
               Go!
