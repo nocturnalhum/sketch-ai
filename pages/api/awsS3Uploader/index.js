@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     const url = await s3.getSignedUrlPromise('putObject', fileParams);
 
     await fetch(url, {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         'Content-type': String(file.type),
       },

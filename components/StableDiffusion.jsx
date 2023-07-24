@@ -37,54 +37,55 @@ export default function StableDiffusion({
         body: JSON.stringify(drawingDataUrl),
       });
 
-      // if (s3response.status === 201) {
-      //   console.log('Enter S3 Success Block');
-      //   const data = await s3response.json();
-      //   setMessage('Image uploaded to S3');
-      //   console.log('Url', data.url);
-      //   const response = await fetch('/api/predictions', {
-      //     method: 'POST',
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify({
-      //       prompt: inputPrompt,
-      //       img: data?.url, // Use the S3 URL from the response
-      //     }),
-      //   });
-      //   let prediction = await response.json();
-      //   if (response.status !== 201) {
-      //     setMessage(prediction.detail);
-      //     console.log('RES1', response);
-      //     return;
-      //   } else {
-      //     console.log('RES2', response);
-      //   }
-      //   setPrediction(prediction);
+      console.log('S3Response', s3response);
+      if (s3response.status === 201) {
+        console.log('Enter S3 Success Block');
+        const data = await s3response.json();
+        setMessage('Image uploaded to S3');
+        console.log('Url', data.url);
+        const response = await fetch('/api/predictions1', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: inputPrompt,
+            img: data?.url, // Use the S3 URL from the response
+          }),
+        });
+        let prediction = await response.json();
+        if (response.status !== 201) {
+          setMessage(prediction.detail);
+          console.log('RES1', response);
+          return;
+        } else {
+          console.log('RES2', response);
+        }
+        setPrediction(prediction);
 
-      //   while (
-      //     prediction.status !== 'succeeded' &&
-      //     prediction.status !== 'failed'
-      //   ) {
-      //     setLoading(true);
-      //     await sleep(1000);
-      //     const response = await fetch('/api/predictions/' + prediction.id);
-      //     prediction = await response.json();
-      //     if (response.status !== 200) {
-      //       setError(prediction.detail);
-      //       return;
-      //     }
-      //     console.log({ prediction });
-      //     setPrediction(prediction);
-      //     setLoading(false);
-      //   }
-      // } else {
-      //   console.error('Error Fetch S3:', s3response.url, s3response.statusText);
-      //   setMessage('Error uploading');
-      //   setError(error.toString());
-      //   setLoading(false);
-      //   setFlip(false);
-      // }
+        while (
+          prediction.status !== 'succeeded' &&
+          prediction.status !== 'failed'
+        ) {
+          setLoading(true);
+          await sleep(1000);
+          const response = await fetch('/api/predictions/' + prediction.id);
+          prediction = await response.json();
+          if (response.status !== 200) {
+            setError(prediction.detail);
+            return;
+          }
+          console.log({ prediction });
+          setPrediction(prediction);
+          setLoading(false);
+        }
+      } else {
+        console.error('Error Fetch S3:', s3response.url, s3response.statusText);
+        setMessage('Error uploading');
+        setError(error.toString());
+        setLoading(false);
+        setFlip(false);
+      }
     } catch (error) {
       console.error('Error processing image prediction:', error.toString());
       setMessage('Error processing image prediction');
