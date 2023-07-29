@@ -3,6 +3,7 @@ import Card1 from '@/components/Card1';
 import Card2 from '@/components/Card2';
 import Tools from '@/components/Tools';
 import StableDiffusion from '@/components/StableDiffusion';
+import ConfirmationModal from '@/components/ConfirmationModal';
 
 export default function Home() {
   const [flip, setFlip] = useState(false);
@@ -11,6 +12,10 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const [color, setColor] = useState('#000');
+  const [radius, setRadius] = useState(5);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
 
@@ -22,10 +27,30 @@ export default function Home() {
     setShowTools(!showTools);
   };
 
+  const clearCanvas = () => {
+    setIsModalOpen(true);
+  };
+  const handleConfirmClear = () => {
+    let canvas = canvasRef.current;
+    let context = canvas.getContext('2d');
+    context.fillStyle = '#FFF'; // Set the background color to white
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    localStorage.removeItem('drawing');
+    setIsModalOpen(false);
+  };
+  const handleCancelClear = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <main
       className={`min-h-screen flex flex-col items-center bg-beach text-gray-100 overflow-y-hidden`}
     >
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onConfirm={handleConfirmClear}
+        onCancel={handleCancelClear}
+      />
       <h1 className='text-xl p-2'>Sketch AI</h1>
       <div className='h-[80vh] max-w-5xl w-full group perspective'>
         <div className='w-full flex justify-end p-2'>
@@ -58,7 +83,12 @@ export default function Home() {
           }`}
         >
           <div className='absolute inset-0'>
-            <Card1 canvasRef={canvasRef} contextRef={contextRef} />
+            <Card1
+              canvasRef={canvasRef}
+              contextRef={contextRef}
+              color={color}
+              radius={radius}
+            />
           </div>
           <div className='absolute inset-0 h-full w-full rounded-xl rotate-y-180 backface-hidden'>
             <Card2 prediction={prediction} error={error} message={message} />
@@ -67,14 +97,22 @@ export default function Home() {
         <div className='relative w-full'>
           <div
             className={`absolute w-full top-0 duration-300 ${
-              showTools ? 'translate-y-[250%]' : 'translate-y-0'
+              !showTools ? 'translate-y-[250%]' : 'translate-y-0'
             } `}
           >
-            <Tools canvasRef={canvasRef} contextRef={contextRef} />
+            <Tools
+              canvasRef={canvasRef}
+              contextRef={contextRef}
+              color={color}
+              setColor={setColor}
+              radius={radius}
+              setRadius={setRadius}
+              clearCanvas={clearCanvas}
+            />
           </div>
           <div
             className={`absolute w-full top-0 duration-300 ${
-              !showTools ? 'translate-y-[250%]' : 'translate-y-0'
+              showTools ? 'translate-y-[250%]' : 'translate-y-0'
             } `}
           >
             <StableDiffusion

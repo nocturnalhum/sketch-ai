@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.customSlider-track {
+  @apply top-1.5 h-2 rounded-2xl bg-[#DDD];
+}
+
+.customSlider-track.customSlider-track-0 {
+  @apply bg-[rgb(104,117,217)];
+}
+.customSlider-thumb {
+  @apply w-5 h-5 rounded-full outline-none cursor-pointer bg-[rgb(104,117,217)] hover:shadow-thumb;
+}
+.customSlider-mark {
+  @apply cursor-pointer top-1.5 w-[1.5px] h-2 bg-black;
+}

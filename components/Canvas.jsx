@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-export default function Canvas({ canvasRef, contextRef, myRef }) {
+export default function Canvas({
+  canvasRef,
+  contextRef,
+  myRef,
+  color,
+  radius,
+}) {
   const [isDrawing, setIsDrawing] = useState(false);
 
   useEffect(() => {
@@ -12,8 +18,11 @@ export default function Canvas({ canvasRef, contextRef, myRef }) {
     ctx.fillStyle = '#FFF';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.lineCap = 'round';
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 10;
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = radius;
+
+    // ctx.globalCompositeOperation = 'destination-over';
     contextRef.current = ctx;
     const savedDrawing = localStorage.getItem('drawing');
     if (savedDrawing) {
@@ -37,7 +46,7 @@ export default function Canvas({ canvasRef, contextRef, myRef }) {
       ctx.canvas.height = myRef.current.clientHeight;
       ctx.canvas.style.width = `${myRef.current.clientWidth}px`;
       ctx.canvas.style.height = `${myRef.current.clientHeight}px`;
-      ctx.lineWidth = 10;
+
       const savedDrawing = localStorage.getItem('drawing');
       if (savedDrawing) {
         const image = new Image();
@@ -57,7 +66,7 @@ export default function Canvas({ canvasRef, contextRef, myRef }) {
     };
     window.addEventListener('resize', resize);
     return () => window.removeEventListener('resize', resize);
-  }, [canvasRef, contextRef, myRef]);
+  }, [canvasRef, contextRef, myRef, color, radius]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -88,6 +97,10 @@ export default function Canvas({ canvasRef, contextRef, myRef }) {
       const x = pageX - rect.left;
       const y = pageY - rect.top;
 
+      // contextRef.current.lineCap = 'round';
+      // contextRef.current.lineJoin = 'round';
+      // contextRef.current.strokeStyle = color;
+      // contextRef.current.lineWidth = radius;
       contextRef.current.lineTo(x, y);
       contextRef.current.stroke();
     };
@@ -120,6 +133,10 @@ export default function Canvas({ canvasRef, contextRef, myRef }) {
       const x = clientX - rect.left;
       const y = clientY - rect.top;
 
+      // contextRef.current.lineCap = 'round';
+      // contextRef.current.lineJoin = 'round';
+      // contextRef.current.strokeStyle = color;
+      // contextRef.current.lineWidth = radius;
       contextRef.current.lineTo(x, y);
       contextRef.current.stroke();
     };
@@ -157,7 +174,7 @@ export default function Canvas({ canvasRef, contextRef, myRef }) {
       canvas.removeEventListener('mouseup', handleMouseUp);
       canvas.removeEventListener('mouseout', handleMouseOut);
     };
-  }, [isDrawing, contextRef, canvasRef]);
+  }, [isDrawing, contextRef, canvasRef, color, radius]);
 
   return (
     <canvas ref={canvasRef} className='bg-white select-none w-full h-full' />
