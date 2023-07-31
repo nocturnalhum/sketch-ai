@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import React, { useState } from 'react';
 import dataURLtoFile from '@/utils/dataURLtoFile';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

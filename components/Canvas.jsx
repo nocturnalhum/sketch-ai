@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function Canvas({
   canvasRef,
@@ -6,6 +6,9 @@ export default function Canvas({
   myRef,
   color,
   radius,
+  setActions,
+  currentPosition,
+  setCurrentPosition,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
 
@@ -31,8 +34,8 @@ export default function Canvas({
       image.onload = () => {
         const scale =
           image.naturalWidth > image.naturalHeight
-            ? canvas.height / image.naturalHeight
-            : canvas.width / image.naturalWidth;
+            ? canvas.width / image.naturalWidth
+            : canvas.height / image.naturalHeight;
         const imageWidth = image.naturalWidth * scale;
         const imageHeight = image.naturalHeight * scale;
         const startX = (canvas.width - imageWidth) / 2;
@@ -52,10 +55,10 @@ export default function Canvas({
         const image = new Image();
         image.src = savedDrawing;
         image.onload = () => {
-          // const scale =
-          //   image.naturalWidth > image.naturalHeight
-          //     ? canvas.height / image.naturalHeight
-          //     : canvas.width / image.naturalWidth;
+          const scale =
+            image.naturalWidth > image.naturalHeight
+              ? canvas.width / image.naturalWidth
+              : canvas.height / image.naturalHeight;
           const imageWidth = image.naturalWidth;
           const imageHeight = image.naturalHeight;
           const startX = (canvas.width - imageWidth) / 2;
@@ -71,6 +74,17 @@ export default function Canvas({
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+
+    // ============================================================================
+    // =============<<< Undo & Redo Actions >>>====================================
+    // ============================================================================
+    const addAction = (dataURL) => {
+      setActions((prevActions) => {
+        const newActions = prevActions.slice(0, currentPosition + 1);
+        return [...newActions, dataURL];
+      });
+      setCurrentPosition((prevPosition) => prevPosition + 1);
+    };
 
     // ============================================================================
     // =============<<< Touch Events >>>===========================================
@@ -110,6 +124,8 @@ export default function Canvas({
       localStorage.setItem('drawing', drawing);
       contextRef.current.closePath();
       setIsDrawing(false);
+      addAction(drawing);
+      console.log('Current Position Set:', currentPosition);
     };
 
     // ============================================================================
@@ -146,6 +162,8 @@ export default function Canvas({
       localStorage.setItem('drawing', drawing);
       contextRef.current.closePath();
       setIsDrawing(false);
+      addAction(drawing);
+      console.log('Current Position Set:', currentPosition);
     };
 
     const handleMouseOut = () => {
@@ -174,7 +192,16 @@ export default function Canvas({
       canvas.removeEventListener('mouseup', handleMouseUp);
       canvas.removeEventListener('mouseout', handleMouseOut);
     };
-  }, [isDrawing, contextRef, canvasRef, color, radius]);
+  }, [
+    isDrawing,
+    contextRef,
+    canvasRef,
+    color,
+    radius,
+    currentPosition,
+    setCurrentPosition,
+    setActions,
+  ]);
 
   return (
     <canvas ref={canvasRef} className='bg-white select-none w-full h-full' />

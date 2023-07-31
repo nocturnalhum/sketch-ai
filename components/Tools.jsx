@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { PopoverPicker } from './PopoverPicker';
 import Slider from './Slider';
-import ConfirmationModal from './ConfirmationModal';
+import { BsImages } from 'react-icons/bs';
 
 export default function Tools({
   canvasRef,
@@ -10,12 +10,53 @@ export default function Tools({
   radius,
   setRadius,
   clearCanvas,
+  undo,
+  redo,
+  setActions,
+  currentPosition,
+  setCurrentPosition,
 }) {
+  const inputRef = useRef();
+
   const savePNG = (e) => {
     let link = e.currentTarget;
     link.setAttribute('download', 'canvas.png');
     let image = canvasRef.current.toDataURL('image/png');
     link.setAttribute('href', image);
+  };
+
+  const handleClick = (e) => {
+    inputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const imageUrl = URL.createObjectURL(file);
+    const image = new Image();
+    image.src = imageUrl;
+    image.onload = () => {
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
+      const scale =
+        image.naturalWidth > image.naturalHeight
+          ? canvas.width / image.naturalWidth
+          : canvas.height / image.naturalHeight;
+      const imageWidth = image.naturalWidth * scale;
+      const imageHeight = image.naturalHeight * scale;
+      const startX = (canvas.width - imageWidth) / 2;
+      const startY = (canvas.height - imageHeight) / 2;
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, startX, startY, imageWidth, imageHeight);
+      const drawing = canvasRef.current.toDataURL('image/png');
+      localStorage.setItem('drawing', drawing);
+      // The addAction function in Canvas.jsx:
+      /** Possibly refactor and add function to utils to reduce repetition */
+      setActions((prevActions) => {
+        const newActions = prevActions.slice(0, currentPosition + 1);
+        return [...newActions, drawing];
+      });
+      setCurrentPosition((prevPosition) => prevPosition + 1);
+    };
   };
 
   return (
@@ -43,6 +84,25 @@ export default function Tools({
             Save
           </a>
         </div>
+        <form
+          onClick={handleClick}
+          className='flex items-center justify-center h-12 w-12 rounded-full bg-sky-500 text-white select-none cursor-pointer'
+        >
+          <BsImages size={25} />
+          <input
+            type='file'
+            ref={inputRef}
+            onChange={handleFileChange}
+            accept='image/*'
+            className='hidden'
+          />
+        </form>
+        <button onClick={undo} className='bg-black p-3 rounded-full'>
+          Undo
+        </button>
+        <button onClick={redo} className='bg-black p-3 rounded-full'>
+          Redo
+        </button>
         <button onClick={clearCanvas} className='bg-black p-3 rounded-full'>
           Clear
         </button>

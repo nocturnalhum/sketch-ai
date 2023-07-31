@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { LuLoader2 } from 'react-icons/lu';
 

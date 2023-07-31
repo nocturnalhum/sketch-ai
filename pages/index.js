@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Card1 from '@/components/Card1';
 import Card2 from '@/components/Card2';
 import Tools from '@/components/Tools';
@@ -15,9 +15,35 @@ export default function Home() {
   const [color, setColor] = useState('#000');
   const [radius, setRadius] = useState(5);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [actions, setActions] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedActions = localStorage.getItem('actions');
+      return savedActions ? JSON.parse(savedActions) : [];
+    }
+    return [];
+  });
+  const [currentPosition, setCurrentPosition] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedPosition = localStorage.getItem('currentPosition');
+      return savedPosition ? parseInt(savedPosition, 10) : -1;
+    }
+    return -1;
+  });
 
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('actions', JSON.stringify(actions));
+    }
+  }, [actions]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('currentPosition', currentPosition);
+    }
+  }, [currentPosition]);
 
   const handleFlip = () => {
     setFlip((prevValue) => !prevValue);
@@ -30,16 +56,75 @@ export default function Home() {
   const clearCanvas = () => {
     setIsModalOpen(true);
   };
+
   const handleConfirmClear = () => {
     let canvas = canvasRef.current;
     let context = canvas.getContext('2d');
     context.fillStyle = '#FFF'; // Set the background color to white
     context.fillRect(0, 0, canvas.width, canvas.height);
     localStorage.removeItem('drawing');
+    localStorage.removeItem('actions');
+    localStorage.removeItem('currentPosition');
+    setActions([]);
+    setCurrentPosition(-1);
     setIsModalOpen(false);
   };
   const handleCancelClear = () => {
     setIsModalOpen(false);
+  };
+
+  const undo = () => {
+    console.log('Undo CurrentPosition', currentPosition);
+    if (currentPosition > 0) {
+      setCurrentPosition((prevPosition) => prevPosition - 1);
+      const img = new Image();
+      img.src = actions[currentPosition - 1];
+      img.onload = () => {
+        contextRef.current.clearRect(
+          0,
+          0,
+          contextRef.current.canvas.width,
+          contextRef.current.canvas.height
+        );
+        contextRef.current.drawImage(img, 0, 0);
+      };
+    } else if (currentPosition === 0) {
+      // Special case: If currentPosition is at the first action, undo to a blank canvas
+      setCurrentPosition(-1);
+      contextRef.current.fillStyle = '#FFF';
+      contextRef.current.fillRect(
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height
+      );
+    }
+    if (currentPosition >= 0) {
+      console.log('Undo', actions[currentPosition]);
+      localStorage.setItem('drawing', actions[currentPosition]);
+    } else {
+      // If there are no actions to undo (canvas is empty), remove the 'drawing' item from localStorage
+      localStorage.removeItem('drawing');
+    }
+  };
+
+  const redo = () => {
+    console.log('Redo CurrentPosition', currentPosition);
+    if (currentPosition < actions.length - 1) {
+      setCurrentPosition((prevPosition) => prevPosition + 1);
+      const img = new Image();
+      img.src = actions[currentPosition + 1];
+      img.onload = () => {
+        contextRef.current.clearRect(
+          0,
+          0,
+          contextRef.current.canvas.width,
+          contextRef.current.canvas.height
+        );
+        contextRef.current.drawImage(img, 0, 0);
+      };
+    }
+    localStorage.setItem('drawing', actions[currentPosition + 1]);
   };
 
   return (
@@ -88,6 +173,9 @@ export default function Home() {
               contextRef={contextRef}
               color={color}
               radius={radius}
+              setActions={setActions}
+              currentPosition={currentPosition}
+              setCurrentPosition={setCurrentPosition}
             />
           </div>
           <div className='absolute inset-0 h-full w-full rounded-xl rotate-y-180 backface-hidden'>
@@ -108,6 +196,11 @@ export default function Home() {
               radius={radius}
               setRadius={setRadius}
               clearCanvas={clearCanvas}
+              undo={undo}
+              redo={redo}
+              setActions={setActions}
+              currentPosition={currentPosition}
+              setCurrentPosition={setCurrentPosition}
             />
           </div>
           <div

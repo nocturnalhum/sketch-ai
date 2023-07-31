@@ -1,7 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import Canvas from './Canvas';
 
-export default function Card1({ canvasRef, contextRef, color, radius }) {
+export default function Card1({
+  canvasRef,
+  contextRef,
+  color,
+  radius,
+  setActions,
+  currentPosition,
+  setCurrentPosition,
+}) {
   const myRef = useRef(null);
 
   return (
@@ -13,6 +21,9 @@ export default function Card1({ canvasRef, contextRef, color, radius }) {
           myRef={myRef}
           color={color}
           radius={radius}
+          setActions={setActions}
+          currentPosition={currentPosition}
+          setCurrentPosition={setCurrentPosition}
         />
       </div>
     </div>
