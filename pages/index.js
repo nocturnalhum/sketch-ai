@@ -75,18 +75,35 @@ export default function Home() {
 
   const undo = () => {
     console.log('Undo CurrentPosition', currentPosition);
+    if (currentPosition === -1) return;
     if (currentPosition > 0) {
       setCurrentPosition((prevPosition) => prevPosition - 1);
-      const img = new Image();
-      img.src = actions[currentPosition - 1];
-      img.onload = () => {
+      const image = new Image();
+      image.src = actions[currentPosition - 1];
+      image.onload = () => {
+        const scale =
+          image.naturalWidth > image.naturalHeight
+            ? contextRef.current.canvas.width / image.naturalWidth
+            : contextRef.current.canvas.height / image.naturalHeight;
+        const imageWidth = image.naturalWidth * scale;
+        const imageHeight = image.naturalHeight * scale;
+        const startX = (contextRef.current.canvas.width - imageWidth) / 2;
+        const startY = (contextRef.current.canvas.height - imageHeight) / 2;
+
         contextRef.current.clearRect(
           0,
           0,
           contextRef.current.canvas.width,
           contextRef.current.canvas.height
         );
-        contextRef.current.drawImage(img, 0, 0);
+        console.log('ContextRef:', contextRef.current);
+        contextRef.current.drawImage(
+          image,
+          startX,
+          startY,
+          imageWidth,
+          imageHeight
+        );
       };
     } else if (currentPosition === 0) {
       // Special case: If currentPosition is at the first action, undo to a blank canvas
@@ -99,29 +116,39 @@ export default function Home() {
         canvasRef.current.height
       );
     }
-    if (currentPosition >= 0) {
-      console.log('Undo', actions[currentPosition]);
-      localStorage.setItem('drawing', actions[currentPosition]);
-    } else {
-      // If there are no actions to undo (canvas is empty), remove the 'drawing' item from localStorage
-      localStorage.removeItem('drawing');
-    }
   };
 
   const redo = () => {
     console.log('Redo CurrentPosition', currentPosition);
+    if (currentPosition === actions.length - 1) return;
     if (currentPosition < actions.length - 1) {
       setCurrentPosition((prevPosition) => prevPosition + 1);
-      const img = new Image();
-      img.src = actions[currentPosition + 1];
-      img.onload = () => {
+      const image = new Image();
+      image.src = actions[currentPosition + 1];
+      image.onload = () => {
+        const scale =
+          image.naturalWidth > image.naturalHeight
+            ? contextRef.current.canvas.width / image.naturalWidth
+            : contextRef.current.canvas.height / image.naturalHeight;
+        const imageWidth = image.naturalWidth * scale;
+        const imageHeight = image.naturalHeight * scale;
+        const startX = (contextRef.current.canvas.width - imageWidth) / 2;
+        const startY = (contextRef.current.canvas.height - imageHeight) / 2;
+
         contextRef.current.clearRect(
           0,
           0,
           contextRef.current.canvas.width,
           contextRef.current.canvas.height
         );
-        contextRef.current.drawImage(img, 0, 0);
+        console.log('ContextRef:', contextRef.current);
+        contextRef.current.drawImage(
+          image,
+          startX,
+          startY,
+          imageWidth,
+          imageHeight
+        );
       };
     }
     localStorage.setItem('drawing', actions[currentPosition + 1]);

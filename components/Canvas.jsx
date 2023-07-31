@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import getLocalStorageDrawing from '@/utils/getLocalStorageDrawing';
 
 export default function Canvas({
   canvasRef,
@@ -27,7 +28,9 @@ export default function Canvas({
 
     // ctx.globalCompositeOperation = 'destination-over';
     contextRef.current = ctx;
-    const savedDrawing = localStorage.getItem('drawing');
+
+    // Convert this to a utils functions:
+    const savedDrawing = getLocalStorageDrawing();
     if (savedDrawing) {
       const image = new Image();
       image.src = savedDrawing;
@@ -50,7 +53,7 @@ export default function Canvas({
       ctx.canvas.style.width = `${myRef.current.clientWidth}px`;
       ctx.canvas.style.height = `${myRef.current.clientHeight}px`;
 
-      const savedDrawing = localStorage.getItem('drawing');
+      const savedDrawing = getLocalStorageDrawing();
       if (savedDrawing) {
         const image = new Image();
         image.src = savedDrawing;
